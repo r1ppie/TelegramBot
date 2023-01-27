@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -14,24 +15,24 @@ namespace TelegramBot
         {
             switch (setUp)
             {
-                case "Main":
-                    ReplyKeyboardMarkup mainMenu = new(new[]
-                    {
-                        new KeyboardButton[] { "Внимание, АНЕКДОТ", "300iq", "Прощай!"},
-                    })
-                    {
-                        ResizeKeyboard = true
-                    };
-                    return mainMenu;
                 case "JokerMode":
                     ReplyKeyboardMarkup jokerMenu = new(new[]
                     {
-                        new KeyboardButton[] { "🤣", "🤬" }
+                        new KeyboardButton[] {"🤣", "🤬"}
                     })
                     {
                         ResizeKeyboard = true
                     };
                     return jokerMenu;
+                case "Wiki":
+                    ReplyKeyboardMarkup wikiMenu = new(new[]
+                    {
+                        new KeyboardButton[] {"Назад"}
+                    })
+                    {
+                        ResizeKeyboard = true
+                    };
+                    return wikiMenu;
             }
             return null;
         }

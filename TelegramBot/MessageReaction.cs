@@ -33,17 +33,28 @@ namespace TelegramBot
 
             Console.WriteLine(
             $"{message?.From?.FirstName} sent message {message?.Text} " +
-            $"to chat {message?.Chat.Id} at {message?.Date}.");
+            $"to chat {message?.Chat.Id} at {message?.Date}.");   
 
             foreach (var command in commands)
             {
+                if (message.Text == "/help")
+                {
+                    finded = true;
+                    await botClient.SendTextMessageAsync(
+                        chatId: message.Chat.Id,
+                        text: $"{command.Name} - {command.Description}",
+                        cancellationToken: cancellationToken);
+                }
                 if (command.Contains(message))
                 {
                     await command.Execute(botClient, message, cancellationToken);
                     finded = true;
                     switch (command.Name)
                     {
-                        case "Внимание, АНЕКДОТ":
+                        case "/300iq":
+                            whichcommand = (int)WhichCommand.Wikipedia;
+                            break;
+                        case "/jokes":
                             whichcommand = (int)WhichCommand.Joke;
                             break;
                     }
@@ -55,10 +66,10 @@ namespace TelegramBot
                     chatId: message.Chat.Id,
                     text: "Не знаю такой команды.",
                     cancellationToken: cancellationToken);
-            if (whichcommand == 1)
-            {
-                await JokesCommand.UserReactionWaiting(botClient, message, cancellationToken);
-            }
+            if (whichcommand == 0)
+                await WikipediaCommand.UserReacting(botClient, message, cancellationToken);
+            else if (whichcommand == 1)
+                await JokesCommand.UserReacting(botClient, message, cancellationToken);
         }
         public static Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
