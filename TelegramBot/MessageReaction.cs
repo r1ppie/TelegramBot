@@ -17,7 +17,7 @@ namespace TelegramBot
     {
         Wikipedia,
         Joke,
-        Cat
+        Pet
     }
     internal class MessageReaction
     {
@@ -58,8 +58,8 @@ namespace TelegramBot
                         case "/jokes":
                             whichcommand = (int)WhichCommand.Joke;
                             break;
-                        case "/cats":
-                            whichcommand = (int)WhichCommand.Cat;
+                        case "/pets":
+                            whichcommand = (int)WhichCommand.Pet;
                             break;
                     }
                     break;
@@ -75,7 +75,7 @@ namespace TelegramBot
             else if (whichcommand == 1)
                 await JokesCommand.UserReacting(botClient, message, cancellationToken);
             else if (whichcommand == 2)
-                await CatsCommand.UserReacting(botClient, message, cancellationToken);
+                await PetsCommand.UserReacting(botClient, message, cancellationToken);
         }
         public static Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {

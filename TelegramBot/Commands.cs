@@ -176,11 +176,11 @@ namespace TelegramBot
             return takedJoke;
         }
     }
-    internal class CatsCommand : Command
+    internal class PetsCommand : Command
     {
-        internal override string Name => "/cats";
+        internal override string Name => "/pets";
 
-        internal override string Description => "Рандомные фотки котов\n" + "Mode: Умиление";
+        internal override string Description => "Рандомные фотки котов или собак.\n" + "Mode: Умиление.";
 
         internal override bool Contains(Message message)
         {
@@ -193,8 +193,8 @@ namespace TelegramBot
         {
             await botClient.SendTextMessageAsync(
                 chatId: message.Chat.Id,
-                text: $"{Description}\n" + "Отправь 😻 для визуального оргазма или 😿 чтобы закончить.",
-                replyMarkup: KeyboardButtons.KeyboardCreating("CatsMode"),
+                text: $"{Description}\n" + "Отправь 😻 или 🐶 для визуального оргазма, 😿 чтобы закончить.",
+                replyMarkup: KeyboardButtons.KeyboardCreating("PetsMode"),
                 cancellationToken: cancellationToken);
         }
         internal static async Task UserReacting(ITelegramBotClient botClient, Message message, CancellationToken cancellationToken)
@@ -204,11 +204,19 @@ namespace TelegramBot
                 switch (message.Text)
                 {
                     case "😻":
-                        var catTask = GetCatPhotoAsync();
+                        var catTask = GetPetPhotoAsync("Cat");
                         string catURL = catTask.Result;
                         await botClient.SendPhotoAsync(
                             chatId: message.Chat.Id,
                             photo: new InputOnlineFile(catURL),
+                            cancellationToken: cancellationToken);
+                        break;
+                    case "🐶":
+                        var dogTask = GetPetPhotoAsync("Dog");
+                        string dogURL = dogTask.Result;
+                        await botClient.SendPhotoAsync(
+                            chatId: message.Chat.Id,
+                            photo: new InputOnlineFile(dogURL),
                             cancellationToken: cancellationToken);
                         break;
                     case "😿":
@@ -219,36 +227,51 @@ namespace TelegramBot
                             cancellationToken: cancellationToken);
                         MessageReaction.whichcommand = -1;
                         break;
+                    default:
+                        await botClient.SendTextMessageAsync(
+                            chatId: message.Chat.Id,
+                            text: "Нет такой комманды",
+                            cancellationToken: cancellationToken);
+                        break;
                 }
             }
         }
-        internal static async Task<string> GetCatPhotoAsync()
+        internal static async Task<string> GetPetPhotoAsync(string petAttribute)
         {
-            string? catURL = "Проблемы с доступом к джойказиноточкаком?(проблемы с получение котика, извини.)";
+            string? petURL = "Проблемы с получение питомца, извини.";
             try
             {
-                string catJSON;
+                string petJSON;
 
                 var client = new HttpClient();
-                HttpResponseMessage response = await client.GetAsync(@"https://api.thecatapi.com/v1/images/search");
+                HttpResponseMessage response = null;
+                switch (petAttribute)
+                {
+                    case "Cat":
+                        response = await client.GetAsync(@"https://api.thecatapi.com/v1/images/search");
+                        break;
+                    case "Dog":
+                        response = await client.GetAsync(@"https://api.thedogapi.com/v1/images/search");
+                        break;
+                }
                 HttpContent content = response.Content;
 
                 using var reader = new StreamReader(await content.ReadAsStreamAsync());
-                catJSON = await reader.ReadToEndAsync();
+                petJSON = await reader.ReadToEndAsync();
 
-                dynamic? items = JsonConvert.DeserializeObject(catJSON);
+                dynamic? items = JsonConvert.DeserializeObject(petJSON);
 
                 if (items != null)
                     foreach (var item in items)
                     {
-                        catURL = Convert.ToString(item.url);
+                        petURL = Convert.ToString(item.url);
                     }
             }
             catch (Exception err)
             {
                 Console.WriteLine(err.Message);
             }
-            return catURL;
+            return petURL;
         }
     }
 }

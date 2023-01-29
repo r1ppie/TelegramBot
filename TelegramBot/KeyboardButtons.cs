@@ -33,15 +33,15 @@ namespace TelegramBot
                         ResizeKeyboard = true
                     };
                     return wikiMenu;
-                case "CatsMode":
-                    ReplyKeyboardMarkup catsMenu = new(new[]
+                case "PetsMode":
+                    ReplyKeyboardMarkup petsMenu = new(new[]
 {
-                        new KeyboardButton[] { "😻", "😿" }
+                        new KeyboardButton[] { "😻", "🐶", "😿" }
                     })
                     {
                         ResizeKeyboard = true
                     };
-                    return catsMenu;
+                    return petsMenu;
             }
             return null;
         }
