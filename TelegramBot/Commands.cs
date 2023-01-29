@@ -13,6 +13,8 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using Telegram.Bot.Types.InputFiles;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace TelegramBot
 {
@@ -130,31 +132,14 @@ namespace TelegramBot
         {
             if (!message.Text.StartsWith("/"))
             {
-                string takedJoke = "Шутка не нашлась :(";
-                try
-                {
-                    Random rnd = new();
-                    string fullfile;
-                    using StreamReader reader = new("jokes.txt");
-
-                    fullfile = await reader.ReadToEndAsync();
-                    string[] jokes = fullfile.Split("~");
-
-                    var jokeindex = rnd.Next(0, jokes.Length);
-                    takedJoke = jokes[jokeindex];
-
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-
                 switch (message.Text)
                 {
                     case "\U0001f923":
+                        var jokeTask = GetJokeAsync();
+                        string joke = jokeTask.Result;
                         await botClient.SendTextMessageAsync(
                             chatId: message.Chat.Id,
-                            text: $"{takedJoke}",
+                            text: joke,
                             cancellationToken: cancellationToken);
                         break;
                     case "\U0001f92c":
@@ -167,6 +152,103 @@ namespace TelegramBot
                         break;
                 }
             }
+        }
+        internal static async Task<string> GetJokeAsync()
+        {
+            string takedJoke = "Шутка не нашлась :(";
+            try
+            {
+                Random rnd = new();
+                string fullfile;
+                using StreamReader reader = new("jokes.txt");
+
+                fullfile = await reader.ReadToEndAsync();
+                string[] jokes = fullfile.Split("~");
+
+                var jokeindex = rnd.Next(0, jokes.Length);
+                takedJoke = jokes[jokeindex];
+
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine(err.Message);
+            }
+            return takedJoke;
+        }
+    }
+    internal class CatsCommand : Command
+    {
+        internal override string Name => "/cats";
+
+        internal override string Description => "Рандомные фотки котов\n" + "Mode: Умиление";
+
+        internal override bool Contains(Message message)
+        {
+            if (message.Type != MessageType.Text)
+                return false;
+
+            return message.Text.Contains(Name);
+        }
+        internal override async Task Execute(ITelegramBotClient botClient, Message message, CancellationToken cancellationToken)
+        {
+            await botClient.SendTextMessageAsync(
+                chatId: message.Chat.Id,
+                text: $"{Description}\n" + "Отправь 😻 для визуального оргазма или 😿 чтобы закончить.",
+                replyMarkup: KeyboardButtons.KeyboardCreating("CatsMode"),
+                cancellationToken: cancellationToken);
+        }
+        internal static async Task UserReacting(ITelegramBotClient botClient, Message message, CancellationToken cancellationToken)
+        {
+            if (!message.Text.StartsWith("/"))
+            {
+                switch (message.Text)
+                {
+                    case "😻":
+                        var catTask = GetCatPhotoAsync();
+                        string catURL = catTask.Result;
+                        await botClient.SendPhotoAsync(
+                            chatId: message.Chat.Id,
+                            photo: new InputOnlineFile(catURL),
+                            cancellationToken: cancellationToken);
+                        break;
+                    case "😿":
+                        await botClient.SendTextMessageAsync(
+                            chatId: message.Chat.Id,
+                            text: "Ладно.",
+                            replyMarkup: new ReplyKeyboardRemove(),
+                            cancellationToken: cancellationToken);
+                        MessageReaction.whichcommand = -1;
+                        break;
+                }
+            }
+        }
+        internal static async Task<string> GetCatPhotoAsync()
+        {
+            string? catURL = "Проблемы с доступом к джойказиноточкаком?(проблемы с получение котика, извини.)";
+            try
+            {
+                string catJSON;
+
+                var client = new HttpClient();
+                HttpResponseMessage response = await client.GetAsync(@"https://api.thecatapi.com/v1/images/search");
+                HttpContent content = response.Content;
+
+                using var reader = new StreamReader(await content.ReadAsStreamAsync());
+                catJSON = await reader.ReadToEndAsync();
+
+                dynamic? items = JsonConvert.DeserializeObject(catJSON);
+
+                if (items != null)
+                    foreach (var item in items)
+                    {
+                        catURL = Convert.ToString(item.url);
+                    }
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine(err.Message);
+            }
+            return catURL;
         }
     }
 }

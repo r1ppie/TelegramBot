@@ -23,7 +23,8 @@ namespace TelegramBot
             {
                 new StartCommand(),
                 new WikipediaCommand(),
-                new JokesCommand()
+                new JokesCommand(),
+                new CatsCommand()
                 //add more commands
             };
             return commadsList;
