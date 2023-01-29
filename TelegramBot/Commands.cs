@@ -74,7 +74,7 @@ namespace TelegramBot
                     text: "Ладно.",
                     replyMarkup: new ReplyKeyboardRemove(),
                     cancellationToken: cancellationToken);
-                MessageReaction.whichcommand = -1;
+                MessageReaction.whichCommand = -1;
             }
             else
             {
@@ -148,7 +148,13 @@ namespace TelegramBot
                             text: "Ладно.",
                             replyMarkup: new ReplyKeyboardRemove(),
                             cancellationToken: cancellationToken);
-                        MessageReaction.whichcommand = -1;
+                        MessageReaction.whichCommand = -1;
+                        break;
+                    default:
+                        await botClient.SendTextMessageAsync(
+                            chatId: message.Chat.Id,
+                            text: "Нет такой комманды.",
+                            cancellationToken: cancellationToken);
                         break;
                 }
             }
@@ -225,12 +231,12 @@ namespace TelegramBot
                             text: "Ладно.",
                             replyMarkup: new ReplyKeyboardRemove(),
                             cancellationToken: cancellationToken);
-                        MessageReaction.whichcommand = -1;
+                        MessageReaction.whichCommand = -1;
                         break;
                     default:
                         await botClient.SendTextMessageAsync(
                             chatId: message.Chat.Id,
-                            text: "Нет такой комманды",
+                            text: "Нет такой комманды.",
                             cancellationToken: cancellationToken);
                         break;
                 }

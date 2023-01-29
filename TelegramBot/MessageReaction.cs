@@ -13,7 +13,7 @@ using System.Net.Security;
 
 namespace TelegramBot
 {
-    enum WhichCommand 
+    enum Commands
     {
         Wikipedia,
         Joke,
@@ -22,7 +22,7 @@ namespace TelegramBot
     internal class MessageReaction
     {
         internal static List<Command> commands = BotCommands.GetCommands();
-        internal static int whichcommand = -1;
+        internal static int whichCommand = -1;
         public static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
             bool finded = false;
@@ -53,28 +53,28 @@ namespace TelegramBot
                     switch (command.Name)
                     {
                         case "/300iq":
-                            whichcommand = (int)WhichCommand.Wikipedia;
+                            whichCommand = (int)Commands.Wikipedia;
                             break;
                         case "/jokes":
-                            whichcommand = (int)WhichCommand.Joke;
+                            whichCommand = (int)Commands.Joke;
                             break;
                         case "/pets":
-                            whichcommand = (int)WhichCommand.Pet;
+                            whichCommand = (int)Commands.Pet;
                             break;
                     }
                     break;
                 }
             }
-            if (finded == false && whichcommand == -1)
+            if (finded == false && whichCommand == -1)
                 await botClient.SendTextMessageAsync(
                     chatId: message.Chat.Id,
                     text: "Не знаю такой команды.",
                     cancellationToken: cancellationToken);
-            if (whichcommand == 0)
+            if (whichCommand == (int)Commands.Wikipedia)
                 await WikipediaCommand.UserReacting(botClient, message, cancellationToken);
-            else if (whichcommand == 1)
+            else if (whichCommand == (int)Commands.Joke)
                 await JokesCommand.UserReacting(botClient, message, cancellationToken);
-            else if (whichcommand == 2)
+            else if (whichCommand == (int)Commands.Pet)
                 await PetsCommand.UserReacting(botClient, message, cancellationToken);
         }
         public static Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
