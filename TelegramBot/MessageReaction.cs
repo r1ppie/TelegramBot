@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Bot.Exceptions;
+﻿using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot;
-using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
-using Telegram.Bot.Polling;
-using System.Net.Security;
 
 namespace TelegramBot
 {
@@ -25,7 +16,7 @@ namespace TelegramBot
         internal static int whichCommand = -1;
         public static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
-            bool finded = false;
+            bool messageFinded = false;
 
             if (update.Message is not { } message)
                 return;
@@ -40,7 +31,7 @@ namespace TelegramBot
             {
                 if (message.Text == "/help")
                 {
-                    finded = true;
+                    messageFinded = true;
                     await botClient.SendTextMessageAsync(
                         chatId: message.Chat.Id,
                         text: $"{command.Name} - {command.Description}",
@@ -49,7 +40,7 @@ namespace TelegramBot
                 if (command.Contains(message))
                 {
                     await command.Execute(botClient, message, cancellationToken);
-                    finded = true;
+                    messageFinded = true;
                     switch (command.Name)
                     {
                         case "/300iq":
@@ -65,7 +56,7 @@ namespace TelegramBot
                     break;
                 }
             }
-            if (finded == false && whichCommand == -1)
+            if (messageFinded == false && whichCommand == -1)
                 await botClient.SendTextMessageAsync(
                     chatId: message.Chat.Id,
                     text: "Не знаю такой команды.",
