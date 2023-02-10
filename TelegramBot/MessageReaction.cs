@@ -61,7 +61,7 @@ namespace TelegramBot
                     chatId: message.Chat.Id,
                     text: "Не знаю такой команды.",
                     cancellationToken: cancellationToken);
-            if (whichCommand == (int)Commands.Wikipedia)
+            else if (whichCommand == (int)Commands.Wikipedia)
                 await WikipediaCommand.UserReacting(botClient, message, cancellationToken);
             else if (whichCommand == (int)Commands.Joke)
                 await JokesCommand.UserReacting(botClient, message, cancellationToken);

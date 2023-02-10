@@ -11,7 +11,6 @@ namespace TelegramBot
         {
             ResizeKeyboard = true
         };
-
         public KeyboardButtons(string setUp)
         {
             switch (setUp)
