@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 
 namespace TelegramBot
 {
+    #region
     internal abstract class Command
     {
         internal abstract string Name { get; }
@@ -15,6 +16,8 @@ namespace TelegramBot
         internal abstract Task Execute(ITelegramBotClient botClient, Message message, CancellationToken cancellationToken);
         internal abstract bool Contains(Message message);
     }
+    #endregion
+    #region StartCommand
     internal class StartCommand : Command
     {
         internal override string Name => @"/start";
@@ -34,6 +37,8 @@ namespace TelegramBot
                 cancellationToken: cancellationToken);
         }
     }
+    #endregion
+    #region WikipediaCommand
     internal class WikipediaCommand : Command
     {
         internal override string Name => "/300iq";
@@ -63,7 +68,7 @@ namespace TelegramBot
                     text: "Ладно.",
                     replyMarkup: new ReplyKeyboardRemove(),
                     cancellationToken: cancellationToken);
-                MessageReaction.whichCommand = -1;
+                WhichCommandHelper.WhichCommand(string.Empty);
             }
             else
             {
@@ -95,6 +100,8 @@ namespace TelegramBot
             }
         }
     }
+    #endregion
+    #region JokesCommand
     internal class JokesCommand : Command
     {
         internal override string Name => "/jokes";
@@ -138,7 +145,7 @@ namespace TelegramBot
                             text: "Ладно.",
                             replyMarkup: new ReplyKeyboardRemove(),
                             cancellationToken: cancellationToken);
-                        MessageReaction.whichCommand = -1;
+                        WhichCommandHelper.WhichCommand(string.Empty);
                         break;
                     default:
                         await botClient.SendTextMessageAsync(
@@ -172,6 +179,8 @@ namespace TelegramBot
             return takedJoke;
         }
     }
+    #endregion
+    #region PetsCommand
     internal class PetsCommand : Command
     {
         internal override string Name => "/pets";
@@ -222,7 +231,7 @@ namespace TelegramBot
                             text: "Ладно.",
                             replyMarkup: new ReplyKeyboardRemove(),
                             cancellationToken: cancellationToken);
-                        MessageReaction.whichCommand = -1;
+                        WhichCommandHelper.WhichCommand(string.Empty);
                         break;
                     default:
                         await botClient.SendTextMessageAsync(
@@ -271,4 +280,5 @@ namespace TelegramBot
             return petURL;
         }
     }
+    #endregion
 }

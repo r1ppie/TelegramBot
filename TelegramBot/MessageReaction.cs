@@ -4,16 +4,10 @@ using Telegram.Bot;
 
 namespace TelegramBot
 {
-    enum Commands
-    {
-        Wikipedia,
-        Joke,
-        Pet
-    }
     internal class MessageReaction
     {
-        internal static List<Command>? commands = BotCommands.commadsList;
-        internal static int whichCommand = -1;
+        private static readonly List<Command>? commands = BotCommands.commadsList;
+        private static int whichCommand = WhichCommandHelper.WhichCommand(string.Empty);
         public static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
             bool messageFinded = false;
@@ -25,7 +19,7 @@ namespace TelegramBot
 
             Console.WriteLine(
             $"{message?.From?.FirstName} sent message {message?.Text} " +
-            $"to chat {message?.Chat.Id} at {message?.Date}.");   
+            $"to chat {message?.Chat.Id} at {message?.Date}.");
 
             foreach (var command in commands)
             {
@@ -41,32 +35,35 @@ namespace TelegramBot
                 {
                     await command.Execute(botClient, message, cancellationToken);
                     messageFinded = true;
-                    switch (command.Name)
+
+                    whichCommand = command.Name switch
                     {
-                        case "/300iq":
-                            whichCommand = (int)Commands.Wikipedia;
-                            break;
-                        case "/jokes":
-                            whichCommand = (int)Commands.Joke;
-                            break;
-                        case "/pets":
-                            whichCommand = (int)Commands.Pet;
-                            break;
-                    }
+                        "/300iq" => WhichCommandHelper.WhichCommand("Wiki"),
+                        "/jokes" => WhichCommandHelper.WhichCommand("Jokes"),
+                        "/pets" => WhichCommandHelper.WhichCommand("Pets"),
+                        _ => WhichCommandHelper.WhichCommand(string.Empty),
+                    };
                     break;
                 }
             }
-            if (messageFinded == false && whichCommand == -1)
-                await botClient.SendTextMessageAsync(
-                    chatId: message.Chat.Id,
-                    text: "Не знаю такой команды.",
-                    cancellationToken: cancellationToken);
-            else if (whichCommand == (int)Commands.Wikipedia)
-                await WikipediaCommand.UserReacting(botClient, message, cancellationToken);
-            else if (whichCommand == (int)Commands.Joke)
-                await JokesCommand.UserReacting(botClient, message, cancellationToken);
-            else if (whichCommand == (int)Commands.Pet)
-                await PetsCommand.UserReacting(botClient, message, cancellationToken);
+            switch (whichCommand)
+            {
+                case -1 when messageFinded == false:
+                    await botClient.SendTextMessageAsync(
+                        chatId: message.Chat.Id,
+                        text: "Не знаю такой команды.",
+                        cancellationToken: cancellationToken);
+                    break;
+                case (int)CommandsNames.Wikipedia:
+                    await WikipediaCommand.UserReacting(botClient, message, cancellationToken);
+                    break;
+                case (int)CommandsNames.Joke:
+                    await JokesCommand.UserReacting(botClient, message, cancellationToken);
+                    break;
+                case (int)CommandsNames.Pet:
+                    await PetsCommand.UserReacting(botClient, message, cancellationToken);
+                    break;
+            }
         }
         public static Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
