@@ -4,39 +4,47 @@ namespace TelegramBot
 {
     internal class KeyboardButtons
     {
-        internal static ReplyKeyboardMarkup? KeyboardCreating(string setUp)
+        internal readonly ReplyKeyboardMarkup menu = new(new[]
+        {
+            Array.Empty<KeyboardButton>()
+        })
+        {
+            ResizeKeyboard = true
+        };
+
+        public KeyboardButtons(string setUp)
         {
             switch (setUp)
             {
                 case "JokerMode":
-                    ReplyKeyboardMarkup jokerMenu = new(new[]
+                    menu = new(new[]
                     {
                         new KeyboardButton[] {"🤣", "🤬"}
                     })
                     {
                         ResizeKeyboard = true
-                    };
-                    return jokerMenu;
+                    };                   
+                    break;
                 case "Wiki":
-                    ReplyKeyboardMarkup wikiMenu = new(new[]
+                    menu = new(new[]
                     {
                         new KeyboardButton[] {"Назад"}
                     })
                     {
                         ResizeKeyboard = true
                     };
-                    return wikiMenu;
+                    break;
                 case "PetsMode":
-                    ReplyKeyboardMarkup petsMenu = new(new[]
+                    menu = new(new[]
 {
                         new KeyboardButton[] { "😻", "🐶", "😿" }
                     })
                     {
                         ResizeKeyboard = true
                     };
-                    return petsMenu;
+                    break;
             }
-            return null;
         }
+        public KeyboardButtons() { }
     }
 }

@@ -14,8 +14,6 @@ namespace TelegramBot
         internal abstract string Description { get; }
         internal abstract Task Execute(ITelegramBotClient botClient, Message message, CancellationToken cancellationToken);
         internal abstract bool Contains(Message message);
-
-        internal KeyboardButtons buttonCreating = new();
     }
     internal class StartCommand : Command
     {
@@ -49,10 +47,11 @@ namespace TelegramBot
         }
         internal override async Task Execute(ITelegramBotClient botClient, Message message, CancellationToken cancellationToken)
         {
+            KeyboardButtons wikiMenu = new("Wiki");
             await botClient.SendTextMessageAsync(
                 chatId: message.Chat.Id,
                 text: $"{Description}\n" + "Напиши что мне искать или нажми 'Назад' чтобы закончить.",
-                replyMarkup: KeyboardButtons.KeyboardCreating("Wiki"),
+                replyMarkup: wikiMenu.menu,
                 cancellationToken: cancellationToken);
         }
         internal static async Task UserReacting(ITelegramBotClient botClient, Message message, CancellationToken cancellationToken)
@@ -112,10 +111,11 @@ namespace TelegramBot
 
         internal override async Task Execute(ITelegramBotClient botClient, Message message, CancellationToken cancellationToken)
         {
+            KeyboardButtons jokerMenu = new("JokerMode");
             await botClient.SendTextMessageAsync(
                 chatId: message.Chat.Id,
                 text: $"{Description}\n" + "Отправь 🤣 для ультрасмеха(кринжа) или 🤬 чтобы закончить.",
-                replyMarkup: KeyboardButtons.KeyboardCreating("JokerMode"),
+                replyMarkup: jokerMenu.menu,
                 cancellationToken: cancellationToken);
         }
         internal static async Task UserReacting(ITelegramBotClient botClient, Message message, CancellationToken cancellationToken)
@@ -187,10 +187,11 @@ namespace TelegramBot
         }
         internal override async Task Execute(ITelegramBotClient botClient, Message message, CancellationToken cancellationToken)
         {
+            KeyboardButtons petsMenu = new("PetsMode");
             await botClient.SendTextMessageAsync(
                 chatId: message.Chat.Id,
                 text: $"{Description}\n" + "Отправь 😻 или 🐶 для визуального оргазма, 😿 чтобы закончить.",
-                replyMarkup: KeyboardButtons.KeyboardCreating("PetsMode"),
+                replyMarkup: petsMenu.menu,
                 cancellationToken: cancellationToken);
         }
         internal static async Task UserReacting(ITelegramBotClient botClient, Message message, CancellationToken cancellationToken)

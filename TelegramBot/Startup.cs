@@ -5,11 +5,10 @@ using Telegram.Bot.Types.Enums;
 
 namespace TelegramBot
 {
-    internal class BotCommands
+    internal static class BotCommands
     {
-        internal static List<Command>? commadsList;
-
-        internal static List<Command> GetCommands()
+        internal readonly static List<Command>? commadsList;
+        static BotCommands()
         {
             commadsList = new List<Command>
             {
@@ -19,7 +18,6 @@ namespace TelegramBot
                 new PetsCommand()
                 //add more commands
             };
-            return commadsList;
         }
     }
     internal class BotSettings

@@ -12,7 +12,7 @@ namespace TelegramBot
     }
     internal class MessageReaction
     {
-        internal static List<Command> commands = BotCommands.GetCommands();
+        internal static List<Command>? commands = BotCommands.commadsList;
         internal static int whichCommand = -1;
         public static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
