@@ -7,16 +7,16 @@ namespace TelegramBot
 {
     internal static class BotCommands
     {
-        internal readonly static List<Command>? commadsList;
+        internal readonly static List<Command> commadsList;
         static BotCommands()
         {
             commadsList = new List<Command>
             {
                 new StartCommand(),
-                new WikipediaCommand(),
+                new HelpCommand(),
+                new WikiCommand(),
                 new JokesCommand(),
                 new PetsCommand()
-                //add more commands
             };
         }
     }
