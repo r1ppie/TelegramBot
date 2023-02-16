@@ -155,9 +155,6 @@ namespace TelegramBot
                         text: joke,
                         cancellationToken: cancellationToken);
                     break;
-                case "\U0001f92c":
-                    await OnLeaveState(botClient, message, cancellationToken);
-                    break;
                 default:
                     await botClient.SendTextMessageAsync(
                         chatId: message.Chat.Id,
@@ -225,9 +222,6 @@ namespace TelegramBot
                         chatId: message.Chat.Id,
                         photo: new InputOnlineFile(dogURL),
                         cancellationToken: cancellationToken);
-                    break;
-                case "😿":
-                    await OnLeaveState(botClient, message, cancellationToken);
                     break;
                 default:
                     await botClient.SendTextMessageAsync(

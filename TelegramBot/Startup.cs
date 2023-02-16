@@ -5,21 +5,6 @@ using Telegram.Bot.Types.Enums;
 
 namespace TelegramBot
 {
-    internal static class BotCommands
-    {
-        internal readonly static List<Command> commadsList;
-        static BotCommands()
-        {
-            commadsList = new List<Command>
-            {
-                new StartCommand(),
-                new HelpCommand(),
-                new WikiCommand(),
-                new JokesCommand(),
-                new PetsCommand()
-            };
-        }
-    }
     internal class BotSettings
     {
         internal static string? Key { get; set; }
@@ -39,8 +24,8 @@ namespace TelegramBot
             };
 
             botClient.StartReceiving(
-                updateHandler: MessageReaction.HandleUpdateAsync,
-                pollingErrorHandler: MessageReaction.HandlePollingErrorAsync,
+                updateHandler: MessageReceiving.HandleUpdateAsync,
+                pollingErrorHandler: MessageReceiving.HandlePollingErrorAsync,
                 receiverOptions: receiverOptions,
                 cancellationToken: cancellationToken.Token);
 

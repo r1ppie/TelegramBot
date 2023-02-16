@@ -4,9 +4,9 @@ using Telegram.Bot.Exceptions;
 
 namespace TelegramBot
 {
-    internal class MessageReaction
+    internal class MessageReceiving
     {
-        private static readonly StateMachine stateMachine = new();
+        private static readonly Dictionary<long, StateMachine> userStateMachine = new();
         public static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
             if (update.Message is not { } message)
@@ -18,7 +18,15 @@ namespace TelegramBot
             $"{message?.From?.FirstName} sent message {message?.Text} " +
             $"to chat {message?.Chat.Id} at {message?.Date}.");
 
-            await stateMachine.SwitchStates(botClient, message, cancellationToken);
+            if (!userStateMachine.ContainsKey(message.Chat.Id))
+            {
+                userStateMachine.Add(message.Chat.Id, new StateMachine());
+                await userStateMachine[message.Chat.Id].SwitchStates(botClient, message, cancellationToken);
+            }
+            else
+            {
+                await userStateMachine[message.Chat.Id].SwitchStates(botClient, message, cancellationToken);
+            }
         }
         public static Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {

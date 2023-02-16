@@ -40,4 +40,19 @@ namespace TelegramBot
         internal override string Name => "/pets";
         internal override string Description => "Рандомные фотки котов или собак.\n" + "Mode: Умиление.";
     }
+    internal static class BotCommands
+    {
+        internal readonly static List<Command> commadsList;
+        static BotCommands()
+        {
+            commadsList = new List<Command>
+            {
+                new StartCommand(),
+                new HelpCommand(),
+                new WikiCommand(),
+                new JokesCommand(),
+                new PetsCommand()
+            };
+        }
+    }
 }
